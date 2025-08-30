@@ -129,16 +129,33 @@ $(function () {
             $(contactResult, contactForm).html('Please Wait...');
             $.ajax({
                 type: "POST",
-                url: "assets/php/contact.php",
+                url: "enquire.php",
                 data: $(contactForm).serialize(),
                 timeout: 20000,
                 success: function (msg) {
                     $(contactResult, contactForm).html('<div class="alert alert-success" role="alert"><strong>Thank you. We will contact you shortly.</strong></div>').delay(3000).fadeOut(2000);
+                    // Reload page to show server-side alert
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
                 },
-                error: $('.thanks').show()
+                error: function() {
+                    $(contactResult, contactForm).html('<div class="alert alert-danger" role="alert"><strong>Sorry, there was an error. Please try again.</strong></div>');
+                }
             });
             return false;
         }
+    });
+
+    /*==========  Alert Dismissal  ==========*/
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        $('.alert').fadeOut('slow');
+    }, 5000);
+
+    // Handle alert close button clicks
+    $(document).on('click', '.alert .close', function() {
+        $(this).closest('.alert').fadeOut('slow');
     });
 
     /*==========  Popup Video  ==========*/
@@ -178,10 +195,10 @@ $(function () {
     });
 
     /*==========   counterUp  ==========*/
-    $(".counter").counterUp({
-        delay: 10,
-        time: 4000
-    });
+    // $(".counter").counterUp({
+    //     delay: 10,
+    //     time: 4000
+    // });
 
     /*==========  NiceSelect Plugin  ==========*/
     $('select').niceSelect();
@@ -190,5 +207,18 @@ $(function () {
     $("#filtered-items-wrap").mixItUp();
     $(".portfolio-filter li a").on("click", function (e) {
         e.preventDefault();
+    });
+
+
+
+    // Show/hide custom plot area based on selection
+    $('#customPlotArea').hide(); // Hide initially
+
+    $('#plotAreaType').on('change', function() {
+        if ($(this).val() === 'custom') {
+            $('#customPlotArea').show();
+        } else {
+            $('#customPlotArea').hide();
+        }
     });
 });
